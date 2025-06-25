@@ -1,26 +1,25 @@
-name: Melon Ticket VIP Automation
+name: Melon Ticket Automation
 on:
-  schedule:
-    - cron: '*/2 * * * *'  # 每2分钟检查（开售前改为*/1）
-  workflow_dispatch:       # 允许手动触发
+  workflow_dispatch:
+    inputs:
+      product_id:
+        description: 'Product ID (from URL)'
+        required: true
+        default: '211541'
+      schedule_id:
+        description: 'Schedule ID'
+        required: true
+        default: '100001'
 
 jobs:
   reserve:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
     steps:
-      - name: VIP Ticket Check
+      - name: Check Tickets
         uses: mooyoul/melon-ticket-actions@v1.1.0
         with:
-          product-id: "211541"
-          schedule-id: "100001"
-          seat-id: "10000"          # VIP석 seatGradeNo
-          date: "2025-08-23"
-          time: "18:00"
-          price: "VIP석"            # 必须与seatGradeName完全一致
-          count: "1"
-          slack-incoming-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          message: 'VIP 티켓 감지! @team'
-        env:
-          MELON_USER_ID: ${{ secrets.MELON_USER_ID }}
-          MELON_USER_PW: ${{ secrets.MELON_USER_PW }}
+          product-id: ${{ github.event.inputs.product_id }}
+          schedule-id: ${{ github.event.inputs.schedule_id }}
+          seat-id: "10000"  # 必须通过API确认最新值
+          slack-incoming-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL || '' }}
+          message: 'Ticket check triggered'
