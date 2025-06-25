@@ -1,17 +1,26 @@
-name: example
+name: Melon Ticket VIP Automation
 on:
   schedule:
-    - cron: '*/5 * * * *' # Every 5 minutes
+    - cron: '*/2 * * * *'  # 每2分钟检查（开售前改为*/1）
+  workflow_dispatch:       # 允许手动触发
+
 jobs:
-  job:
+  reserve:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 3
     steps:
-      - name: Check Tickets
+      - name: VIP Ticket Check
         uses: mooyoul/melon-ticket-actions@v1.1.0
         with:
-          product-id: 204755
-          schedule-id: 100001
-          seat-id: 1_0
+          product-id: "211541"
+          schedule-id: "100001"
+          seat-id: "10000"          # VIP석 seatGradeNo
+          date: "2025-08-23"
+          time: "18:00"
+          price: "VIP석"            # 必须与seatGradeName完全一致
+          count: "1"
           slack-incoming-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          message: '<@U4CF18RKL> 티켓사세요'
+          message: 'VIP 티켓 감지! @team'
+        env:
+          MELON_USER_ID: ${{ secrets.MELON_USER_ID }}
+          MELON_USER_PW: ${{ secrets.MELON_USER_PW }}
