@@ -21,5 +21,9 @@ jobs:
           product-id: ${{ github.event.inputs.product_id }}
           schedule-id: ${{ github.event.inputs.schedule_id }}
           seat-id: "10000"  # 必须通过API确认最新值
-          slack-incoming-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL || '' }}
+          # 以下二选一：
+          slack-incoming-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}  # 方案1：使用真实Webhook
           message: 'Ticket check triggered'
+        env:
+          MELON_USER_ID: ${{ secrets.MELON_USER_ID }}
+          MELON_USER_PW: ${{ secrets.MELON_USER_PW }}
